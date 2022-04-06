@@ -1,0 +1,3 @@
+# jenkins docker-compose가 안되면...?
+
+jenkins images에 있는 bin/bash로 들어가서 설치해주면 되더라...

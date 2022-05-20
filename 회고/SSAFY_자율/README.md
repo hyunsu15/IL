@@ -14,7 +14,7 @@
 
    1. Community,Donation,Follow,Payment,Search기능구현
 
-   2. 일부 기능 TDD로구현,TestCode 작성
+   2. 일부 기능 TDD로구현,일부 TestCode 작성
 
    3. Jenkins를 통한 자동 빌드
 

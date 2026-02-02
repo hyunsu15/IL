@@ -91,6 +91,6 @@ void validate(Object... validationHints) {
 ## 궁금증
 이러면 BindingResult가아니라 Errors의 자식들은 전부되지않을까??
 
-가능함. Errors로 테스트해본 결과가능했음.
+가능함. Errors로 테스트해본 결과, 가능했음.
  
 

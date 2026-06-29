@@ -27,7 +27,7 @@
 
 ### Grid System
 
-* 기본 여백 단위: 8pt
+* 기본 여백 단위: 8px (Apple HIG 8pt 기준. CSS에서는 px로 구현한다. CSS의 `pt`는 1.333px 인쇄 단위이므로 사용하지 않는다.)
 * 컴포넌트 간격:
 
   * Small: 8px
@@ -186,7 +186,7 @@ box-shadow:
 ### Navigation Bar
 
 ```css
-height: 52px;
+height: 44px;
 ```
 
 구성
@@ -249,8 +249,10 @@ padding: 0 12px;
 ### Easing
 
 ```css
-cubic-bezier(0.4, 0, 0.2, 1)
+cubic-bezier(0.42, 0, 0.58, 1)
 ```
+
+`cubic-bezier(0.4, 0, 0.2, 1)`은 Material Design(Google)의 standard easing이므로 Apple 가이드에서 사용하지 않는다.
 
 ### Rules
 
@@ -305,7 +307,114 @@ Secondary Surface: #2C2C2E
 
 ---
 
-## 14. Developer Checklist
+## 14. Tab Bar
+
+### Specs
+
+```css
+height: 49px;
+padding-bottom: env(safe-area-inset-bottom); /* 홈 인디케이터 영역 확보 */
+```
+
+### Item
+
+```css
+min-width: 44px;
+padding: 4px 0;
+```
+
+* 아이콘: 25×25px
+* 레이블: 10px (Caption보다 작게)
+* 항목 수: 최대 5개 (iPhone 기준)
+
+### Rules
+
+* 탭은 앱의 최상위 구조 전환에만 사용
+* 탭 전환 시 각 탭의 스크롤 위치·상태 유지
+* 현재 탭 아이콘은 Primary Color(`#007AFF`)로 강조
+* 탭 내부 이동에는 Navigation Bar 사용
+
+---
+
+## 15. Bottom Sheet (Sheet Presentation)
+
+### Detent (높이 단계)
+
+| Detent  | 높이         | 용도                  |
+| ------- | ------------ | --------------------- |
+| Small   | ~25% vh      | 간단한 옵션, 확인     |
+| Medium  | ~50% vh      | 보조 정보, 필터       |
+| Large   | ~92% vh      | 전체 콘텐츠 (사실상 전체화면) |
+
+### Container
+
+```css
+border-radius: 12px 12px 0 0;
+padding-top: 8px;
+padding-bottom: env(safe-area-inset-bottom);
+```
+
+### Handle (드래그 핸들)
+
+```css
+width: 36px;
+height: 5px;
+border-radius: 3px;
+background: #3A3A3C;
+margin: 0 auto 8px;
+```
+
+### Rules
+
+* 핸들을 항상 상단에 표시 (드래그 가능함을 암시)
+* 배경 dimming: `rgba(0, 0, 0, 0.4)`
+* 아래로 스와이프하면 dismiss
+* 시트 내부 스크롤이 최상단일 때만 dismiss 제스처 활성화
+
+---
+
+## 16. Safe Area (CSS 환경 변수)
+
+PWA 또는 iOS Safari 전체화면에서 노치·홈 인디케이터와 겹치지 않도록 필수 적용.
+
+### viewport-fit 설정
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+```
+
+### CSS 적용
+
+```css
+/* 상단 노치 영역 (Status Bar) */
+padding-top: env(safe-area-inset-top);
+
+/* 하단 홈 인디케이터 영역 */
+padding-bottom: env(safe-area-inset-bottom);
+
+/* 좌우 (Dynamic Island 등) */
+padding-left: env(safe-area-inset-left);
+padding-right: env(safe-area-inset-right);
+```
+
+### 주요 적용 대상
+
+| 컴포넌트       | 적용 속성                          |
+| -------------- | ---------------------------------- |
+| Navigation Bar | `padding-top`                      |
+| Tab Bar        | `padding-bottom`                   |
+| Bottom Sheet   | `padding-bottom`                   |
+| 고정 하단 버튼 | `padding-bottom` 또는 `margin-bottom` |
+
+### Rules
+
+* `viewport-fit=cover` 없이 `env()` 값은 항상 0
+* Fallback 값 필수: `env(safe-area-inset-bottom, 16px)`
+* Pure Black 배경에서 Status Bar와 구분되도록 색상 주의
+
+---
+
+## 17. Developer Checklist
 
 ### Layout
 
@@ -328,6 +437,18 @@ Secondary Surface: #2C2C2E
 * [ ] 키보드 조작 가능
 * [ ] 스크린 리더 지원
 * [ ] 명암비 검증 완료
+
+### Tab Bar & Sheet
+
+* [ ] Tab Bar에 `env(safe-area-inset-bottom)` 적용
+* [ ] Bottom Sheet handle 표시
+* [ ] Sheet border-radius 12px (상단)
+
+### Safe Area
+
+* [ ] `viewport-fit=cover` meta 태그 설정
+* [ ] Navigation Bar에 `env(safe-area-inset-top)` 적용
+* [ ] 하단 고정 요소에 `env(safe-area-inset-bottom)` 적용
 
 ### Performance
 

@@ -126,9 +126,9 @@ UI보다 콘텐츠가 중요하다.
 
 ## Rule
 
-100ms 이내
+100ms 이내 (Nielsen 기준 Instant 범위 — 16. Performance UX 참고)
 
-사용자는 시스템이 반응했다고 느껴야 한다.
+사용자는 시스템이 즉각 반응했다고 느껴야 한다. 100ms를 초과하면 지연을 인식한다.
 
 ---
 
@@ -484,6 +484,86 @@ Progress 표시 필요
 
 ---
 
+# 18. Gesture Patterns
+
+## Principle
+
+제스처는 빠르고 직관적이지만, 발견하기 어렵다. 반드시 시각적 단서와 병행 제공한다.
+
+---
+
+## Standard Gestures
+
+| 제스처 | 동작 | 적용 대상 |
+| ------ | ---- | --------- |
+| 좌에서 우로 스와이프 (엣지) | 이전 화면으로 돌아가기 | Navigation 전체 |
+| 아래로 스와이프 | Sheet/Modal 닫기 | Bottom Sheet, 전체화면 Modal |
+| 위로 당기기 (Pull) | 새로고침 | 스크롤 최상단 목록 |
+| 좌/우 스와이프 (셀) | 숨겨진 액션 노출 (삭제, 보관) | List Item |
+| 길게 누르기 (Long Press) | 컨텍스트 메뉴 표시 | 카드, 셀, 이미지 |
+
+---
+
+## Rules
+
+* 엣지 스와이프는 절대 막지 않는다 — 브라우저 뒤로가기와 충돌 시 사용자는 혼란을 느낀다.
+* 스와이프 삭제는 반드시 확인 단계 또는 Undo를 함께 제공한다 (6. Forgiveness 참고).
+* Pull-to-Refresh는 스크롤이 최상단(scrollTop === 0)일 때만 작동한다.
+* Long Press 메뉴는 최대 5개 항목 이내로 구성한다.
+* 제스처만으로 접근 가능한 기능은 반드시 버튼 대안도 제공한다 (Accessibility).
+
+---
+
+# 19. Sheet & Modal Presentation
+
+## Principle
+
+Sheet는 현재 컨텍스트를 유지한 채 보조 작업을 수행할 때 사용한다.
+Modal은 컨텍스트를 완전히 차단해야 할 때만 사용한다.
+
+---
+
+## 언제 무엇을 쓸까
+
+| 상황 | 패턴 |
+| ---- | ---- |
+| 필터, 정렬, 간단한 설정 | Bottom Sheet (Medium Detent) |
+| 양식 작성, 긴 콘텐츠 | Bottom Sheet (Large Detent) |
+| 돌이킬 수 없는 확인 (삭제, 결제) | Alert / Action Sheet |
+| 완전히 별개의 흐름 | Full Screen Modal |
+
+---
+
+## Dismiss 규칙
+
+* 아래로 스와이프 → 항상 닫힘
+* 배경 탭 → 닫힘 (입력 중이면 확인 후 닫힘)
+* 저장이 필요한 Sheet는 닫기 버튼에 "취소"를 명시
+
+---
+
+## Good
+
+```text
+[필터]
+─────────────────
+카테고리
+가격 범위
+평점
+─────────────────
+[적용]
+```
+
+---
+
+## Bad
+
+* 필터를 전체 화면 페이지 이동으로 처리
+* Sheet 안에 또 다른 Sheet 중첩
+* 배경 탭으로 닫히지 않는 non-dismissible Sheet (특별한 이유 없이)
+
+---
+
 # UX Checklist
 
 ## Clarity
@@ -510,6 +590,18 @@ Progress 표시 필요
 
 * [ ] 현재 위치 표시
 * [ ] 뒤로가기 가능
+
+## Gestures
+
+* [ ] 엣지 스와이프(뒤로가기) 차단 없음
+* [ ] 제스처 전용 기능에 버튼 대안 제공
+* [ ] Pull-to-Refresh는 스크롤 최상단에서만 작동
+
+## Sheet & Modal
+
+* [ ] 아래 스와이프로 Sheet 닫기 가능
+* [ ] Sheet 중첩 없음
+* [ ] 파괴적 액션은 Alert/Action Sheet 사용
 
 ## Performance
 

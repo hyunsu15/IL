@@ -1,10 +1,11 @@
 # UX 가이드라인
 
 ## 순위
-AppleUX가이드와 GOOGLE UX가이드를 읽고 학습한다.
-AppleUI가이드와 GOOGLE UI 가이드를 읽고 학습한다.
-충돌되는 부분은 UI의 경우 Apple UI,Google UI 가이드 순서로 한다. 
+AppleUX가이드.md와 GoogleUX가이드.md를 읽고 학습한다.
+AppleUI가이드.md와 GoogleUI가이드.md를 읽고 학습한다.
+충돌되는 부분은 UI의 경우 Apple UI, Google UI 가이드 순서로 한다. 
 단,transition: all을 사용해서, CSS 변수(var(--color))로 지정된 색상 요소에서 렌더링 스레드가 일시적으로 먹통이 되거나 트랜지션이 아예 멈춰버리는 현상이 생길경우 @property로 CSS 변수 타입 정의한다.
+해당 기능이 지원되지 않는 라이브러리나 해당 경우 억지로 할 필요없다.(성능에 매우 악영향을 미친다.)
 
 UX 경우 Google UX, Apple UX 순서로 한다.
 

@@ -126,7 +126,7 @@ sans-serif
 ## Background
 
 ```css
-#FFFFFF
+#FFFBFE
 ```
 
 ---
@@ -154,11 +154,84 @@ sans-serif
 
 ---
 
-## Example
+## Tonal Elevation (Surface Tint)
+
+M3는 그림자 대신 **surfaceTint 색상 오버레이**로 고도를 표현한다. 라이트 모드에서 elevation이 높아질수록 Primary 색상이 surface에 얇게 혼합된다.
+
+| Level | surfaceTint Opacity | 적용 컴포넌트 예시          |
+| ----- | ------------------- | --------------------------- |
+| 0     | 0%                  | 기본 Surface                |
+| 1     | 5%                  | Elevated Card, Bottom Sheet |
+| 2     | 8%                  | Navigation Bar, Menu        |
+| 3     | 11%                 | FAB, Dialog                 |
+| 4     | 12%                 | (호버 상태 elevation)        |
+| 5     | 14%                 | 최상위 오버레이              |
 
 ```css
-box-shadow:
-0 1px 2px rgba(0,0,0,.12);
+/* Level 1 — Elevated Card */
+.card-elevated {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 5%,
+    var(--md-sys-color-surface)
+  );
+}
+
+/* Level 3 — FAB / Dialog */
+.fab, .dialog {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 11%,
+    var(--md-sys-color-surface)
+  );
+}
+```
+
+> **주의:** 다크 모드에서는 surfaceTint 대신 그림자(shadow)를 활용해 고도를 구분한다.
+
+---
+
+# 5-1. State Layers (상태 레이어)
+
+M3는 인터랙션 상태를 색상 오버레이(State Layer)로 표현한다. 그림자나 색상 교체 대신 **on-color를 지정된 불투명도로 덮어씌운다.**
+
+## 상태별 불투명도
+
+| State    | Opacity | 발생 시점                    |
+| -------- | ------- | ---------------------------- |
+| Hover    | 8%      | 마우스 커서가 올라갈 때       |
+| Focused  | 10%     | 키보드 포커스 진입 시         |
+| Pressed  | 10%     | 클릭·탭 순간                  |
+| Dragged  | 16%     | 드래그 중 (elevation도 상승)  |
+
+## 규칙
+
+* 동시에 하나의 상태 레이어만 적용한다 (Hover + Focus 중첩 없음).
+* 상태 레이어 색상 = 해당 컴포넌트의 **on-color** (예: Primary 버튼 → on-primary).
+* 터치 영역(48dp)과 시각적 상태 레이어 영역(40dp)은 분리된다.
+
+## CSS 구현 예시
+
+```css
+/* Filled Button — Hover state layer */
+.btn-filled:hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--md-sys-color-on-primary);
+  opacity: 0.08;
+  border-radius: inherit;
+}
+
+/* Focus state */
+.btn-filled:focus-visible::before {
+  opacity: 0.10;
+}
+
+/* Pressed state */
+.btn-filled:active::before {
+  opacity: 0.10;
+}
 ```
 
 ---
@@ -204,6 +277,44 @@ background: none;
 
 ---
 
+# 6-1. FAB (Floating Action Button)
+
+화면에서 가장 중요한 단일 액션을 위한 컴포넌트. 모든 콘텐츠 위에 떠 있는 형태로 표시된다.
+
+## 크기
+
+| Variant | Container Size | Icon Size | Border Radius |
+| ------- | -------------- | --------- | ------------- |
+| Small   | 40 × 40px      | 24px      | 12px          |
+| Medium (기본) | 56 × 56px | 24px    | 16px          |
+| Large   | 96 × 96px      | 36px      | 28px          |
+
+## CSS 예시 (Medium FAB)
+
+```css
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 5px rgba(0,0,0,.2), 0 1px 18px rgba(0,0,0,.12);
+  /* Elevation Level 3 */
+}
+```
+
+## 사용 규칙
+
+* 화면당 FAB 1개 원칙 (가장 핵심 액션에만 사용).
+* 위치: 우측 하단 (모바일), 콘텐츠 위에 오버레이.
+* 스크롤 시 숨기거나 축소(Extended → Icon) 가능.
+* FAB는 삭제·파괴적 액션에 사용하지 않는다.
+
+---
+
 # 7. Cards
 
 ## Standard Card
@@ -235,7 +346,7 @@ padding: 16px;
 ## Navigation Rail
 
 ```css
-72px
+80px
 ```
 
 태블릿 이상 권장
@@ -297,9 +408,33 @@ border-radius: 4px;
 
 | Type   | Time      |
 | ------ | --------- |
-| Short  | 100~200ms |
+| Short  | 50~200ms  |
 | Medium | 200~300ms |
 | Long   | 300~500ms |
+
+---
+
+## Easing Curves
+
+M3는 4가지 이징 커브를 정의한다.
+
+| Curve    | cubic-bezier              | 사용 상황                  |
+| -------- | ------------------------- | -------------------------- |
+| Standard | `cubic-bezier(0.2,0,0,1)` | 기본 UI 전환 (대부분의 경우) |
+| Emphasized | `cubic-bezier(0.2,0,0,1)` + 더 긴 duration | 화면 진입·주요 전환 |
+| Decelerate | `cubic-bezier(0,0,0.2,1)` | 요소 진입 (빠르게 시작 → 천천히 정지) |
+| Accelerate | `cubic-bezier(0.4,0,1,1)` | 요소 퇴장 (천천히 시작 → 빠르게 퇴장) |
+
+```css
+/* Standard — 일반 전환 */
+transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+
+/* Decelerate — 요소 등장 */
+transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+
+/* Accelerate — 요소 퇴장 */
+transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+```
 
 ---
 
@@ -317,7 +452,8 @@ border-radius: 4px;
 
 | Type        | Value |
 | ----------- | ----- |
-| Small       | 4px   |
+| Extra Small | 4px   |
+| Small       | 8px   |
 | Medium      | 12px  |
 | Large       | 16px  |
 | Extra Large | 28px  |
@@ -374,7 +510,7 @@ WCAG AA 이상
 ## Surface
 
 ```css
-#121212
+#141218
 ```
 
 ---
@@ -382,7 +518,7 @@ WCAG AA 이상
 ## Surface Container
 
 ```css
-#1E1E1E
+#211F26
 ```
 
 ---
@@ -409,9 +545,22 @@ WCAG AA 이상
 
 ## Components
 
-* [ ] Hover 지원
-* [ ] Focus 지원
+* [ ] Hover 지원 (State Layer 8%)
+* [ ] Focus 지원 (State Layer 10%)
+* [ ] Pressed 지원 (State Layer 10%)
 * [ ] Disabled 상태 제공
+* [ ] FAB — 화면당 1개, 핵심 액션만
+
+## Motion
+
+* [ ] Easing curve 적용 (Standard / Decelerate / Accelerate)
+* [ ] 요소 등장 시 Decelerate easing 사용
+* [ ] 요소 퇴장 시 Accelerate easing 사용
+
+## Elevation
+
+* [ ] Tonal surfaceTint 적용 (그림자만으로 고도 표현하지 않음)
+* [ ] 다크모드에서 shadow 활용
 
 ## Accessibility
 

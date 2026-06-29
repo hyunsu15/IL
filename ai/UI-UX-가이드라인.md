@@ -3,11 +3,24 @@
 ## 순위
 AppleUX가이드.md와 GoogleUX가이드.md를 읽고 학습한다.
 AppleUI가이드.md와 GoogleUI가이드.md를 읽고 학습한다.
-충돌되는 부분은 UI의 경우 Apple UI, Google UI 가이드 순서로 한다. 
-단,transition: all을 사용해서, CSS 변수(var(--color))로 지정된 색상 요소에서 렌더링 스레드가 일시적으로 먹통이 되거나 트랜지션이 아예 멈춰버리는 현상이 생길경우 @property로 CSS 변수 타입 정의한다.
-해당 기능이 지원되지 않는 라이브러리나 해당 경우 억지로 할 필요없다.(성능에 매우 악영향을 미친다.)
-
+충돌되는 부분은 UI의 경우 Apple UI, Google UI 가이드 순서로 한다.
 UX 경우 Google UX, Apple UX 순서로 한다.
+
+**AppleUI 규칙과 GoogleUX 규칙이 같은 요소에 대해 충돌하는 경우, AppleUI를 따른다.**
+
+### 주요 충돌 항목 확정 적용
+
+| 항목 | AppleUI | GoogleUX | 적용 기준 |
+| ---- | ------- | -------- | -------- |
+| 애니메이션 목적 | 기능 설명용 금지, 상태 변화만 표현 | 기능을 설명하는 수단으로 사용 | AppleUI 적용: 기능 설명용 금지 |
+| 터치 영역 | 44×44px 이상 | 48dp 이상 | AppleUI 적용: 44×44px 이상 |
+| 그리드 단위 | 8px 배수 기준 | 4dp 배수 기준 | AppleUI 적용: 8px 배수 사용 |
+
+### @property CSS 변수 성능 주의
+
+`transition: all`과 `var(--color)` 색상 변수를 함께 사용하면 렌더링 스레드가 멈추거나 트랜지션이 끊길 수 있다.
+- 해결: 해당 CSS 변수를 `@property`로 타입 정의한다.
+- 예외: 라이브러리가 지원하지 않거나 성능이 더 나빠지는 경우 적용하지 않는다.
 
 
 

@@ -1,20 +1,26 @@
 # UX 가이드라인
 
 ## 순위
+
 AppleUX가이드.md와 GoogleUX가이드.md를 읽고 학습한다.
 AppleUI가이드.md와 GoogleUI가이드.md를 읽고 학습한다.
-충돌되는 부분은 UI의 경우 Apple UI, Google UI 가이드 순서로 한다.
-UX 경우 Google UX, Apple UX 순서로 한다.
 
-**AppleUI 규칙과 GoogleUX 규칙이 같은 요소에 대해 충돌하는 경우, AppleUI를 따른다.**
+판단 시 아래 순서대로 적용한다.
+
+1. **공식 (1순위)** — 각 가이드 본문 중 공식 문서(Apple HIG·developer.apple.com, Material Design `m3.material.io` 등)에서 확인된 내용을 가장 먼저 따른다.
+2. **공식 내 충돌 해소** — 공식 내용끼리 충돌하면 UI는 Apple UI → Google UI 순서, UX는 Google UX → Apple UX 순서로 한다. **AppleUI 규칙과 Google(UI/UX) 규칙이 같은 요소에 대해 충돌하면 AppleUI를 따른다.**
+3. **비공식 (최후 fallback)** — 위 1~2(공식 본문)로 판단할 수 없을 때만, 각 가이드 하단의 `비공식 (공식 문서 미수록)` 섹션을 참고한다. 공식 본문으로 결정할 수 있으면 비공식 섹션은 보지 않는다.
+   - 단, 비공식 항목이 사람이 인지하기 어렵거나 보기 어려운 요소라면 그 값을 무시하고, 그렇게 판단한 이유와 대신 적용하는 방식을 안내한다.
 
 ### 주요 충돌 항목 확정 적용
 
-| 항목 | AppleUI | GoogleUX | 적용 기준 |
+| 항목 | AppleUI | Google (출처) | 적용 기준 |
 | ---- | ------- | -------- | -------- |
-| 애니메이션 목적 | 기능 설명용 금지, 상태 변화만 표현 | 기능을 설명하는 수단으로 사용 | AppleUI 적용: 기능 설명용 금지 |
-| 터치 영역 | 44×44px 이상 | 48dp 이상 | AppleUI 적용: 44×44px 이상 |
-| 그리드 단위 | 8px 배수 기준 | 4dp 배수 기준 | AppleUI 적용: 8px 배수 사용 |
+| 애니메이션 목적 | 기능 설명용 금지, 상태 변화만 표현 | GoogleUX: 의미 있는 모션, 과도한 애니메이션 지양 | AppleUI 적용: 기능 설명용 금지 |
+| 터치 영역 | 44×44pt 이상 (CSS에서는 44px) | GoogleUI: 48×48dp 이상 | AppleUI 적용: 44×44pt (=CSS 44px) |
+| 그리드 단위 | 8pt(=CSS 8px) 배수 기준 | GoogleUI(Material): 4dp/8dp 그리드 | AppleUI 적용: 8px 배수 사용 |
+
+> 위 수치의 공식 출처(Apple HIG / Material)는 `AppleUI가이드.md`·`GoogleUI가이드.md` 하단 "출처" 절을 참조. 출처가 명시되지 않은 세부 수치는 공식 미확인 값이다.
 
 ### @property CSS 변수 성능 주의
 

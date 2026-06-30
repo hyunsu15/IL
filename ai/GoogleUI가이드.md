@@ -1,5 +1,7 @@
 # Google Style UI Guide (Material Design 3)
 
+> **충돌 시 우선순위:** 이 문서의 규칙이 `AppleUI가이드.md`와 충돌하면 `UI-UX-가이드라인.md`의 충돌표를 따른다. 확정 항목 — 터치 영역 44×44pt(=CSS 44px), 그리드 8px 배수(AppleUI 우선; Material 원규격은 4dp/8dp), 애니메이션은 기능 설명용으로 쓰지 않음.
+
 ## 1. Design Principles
 
 ### Adaptive
@@ -26,29 +28,24 @@
 기본 단위
 
 ```text
-4dp Grid
+8dp Grid (4dp는 아이콘·타이포용 보조 그리드)
 ```
 
-주요 간격
-
-| Size | Value |
-| ---- | ----- |
-| XS   | 4dp   |
-| S    | 8dp   |
-| M    | 16dp  |
-| L    | 24dp  |
-| XL   | 32dp  |
-| XXL  | 48dp  |
+출처: https://m3.material.io/styles/spacing/overview
 
 ---
 
 ## Responsive Breakpoints
 
-| Device  | Width         |
-| ------- | ------------- |
-| Mobile  | < 600px       |
-| Tablet  | 600px ~ 840px |
-| Desktop | > 840px       |
+Material 3 공식 명칭은 window size class다. (단위 dp)
+
+| Size class | Width (dp)   | 대표 기기 |
+| ---------- | ------------ | -------- |
+| Compact     | < 600        | 세로 폰 |
+| Medium      | 600 ~ 839    | 세로 태블릿·폴더블 |
+| Expanded    | 840 ~ 1199   | 가로 태블릿, 소형 데스크톱 |
+| Large       | 1200 ~ 1599  | 데스크톱 |
+| Extra-large | ≥ 1600       | 울트라와이드, 외부 디스플레이 |
 
 ---
 
@@ -283,11 +280,13 @@ background: none;
 
 ## 크기
 
-| Variant | Container Size | Icon Size | Border Radius |
-| ------- | -------------- | --------- | ------------- |
-| Small   | 40 × 40px      | 24px      | 12px          |
-| Medium (기본) | 56 × 56px | 24px    | 16px          |
-| Large   | 96 × 96px      | 36px      | 28px          |
+| Variant    | Container Size | Icon Size | Border Radius |
+| ---------- | -------------- | --------- | ------------- |
+| Small      | 40 × 40dp      | 24dp      | 12dp          |
+| FAB (기본) | 56 × 56dp      | 24dp      | 16dp          |
+| Large      | 96 × 96dp      | 36dp      | 28dp          |
+
+※ 2025 M3 업데이트 기준 별도의 'Medium FAB'는 80×80dp이며, Small FAB(40dp)는 deprecated다. 출처: https://m3.material.io/components/floating-action-button/specs
 
 ## CSS 예시 (Medium FAB)
 
@@ -406,11 +405,14 @@ border-radius: 4px;
 
 ## Duration
 
-| Type   | Time      |
-| ------ | --------- |
-| Short  | 50~200ms  |
-| Medium | 200~300ms |
-| Long   | 300~500ms |
+| Type       | Time       |
+| ---------- | ---------- |
+| Short      | 50~200ms   |
+| Medium     | 250~400ms  |
+| Long       | 450~600ms  |
+| Extra-Long | 700~1000ms |
+
+> M3 공식 duration 토큰 기준. 출처: https://github.com/material-foundation/material-tokens/blob/json/json/motion.json
 
 ---
 
@@ -421,19 +423,19 @@ M3는 4가지 이징 커브를 정의한다.
 | Curve    | cubic-bezier              | 사용 상황                  |
 | -------- | ------------------------- | -------------------------- |
 | Standard | `cubic-bezier(0.2,0,0,1)` | 기본 UI 전환 (대부분의 경우) |
-| Emphasized | `cubic-bezier(0.2,0,0,1)` + 더 긴 duration | 화면 진입·주요 전환 |
-| Decelerate | `cubic-bezier(0,0,0.2,1)` | 요소 진입 (빠르게 시작 → 천천히 정지) |
-| Accelerate | `cubic-bezier(0.4,0,1,1)` | 요소 퇴장 (천천히 시작 → 빠르게 퇴장) |
+| Emphasized | M3 공식 2-part path 곡선 — CSS 단일 `cubic-bezier()`로 표현 불가. 구현 시 Emphasized Decelerate `cubic-bezier(0.05,0.7,0.1,1)`(진입) / Emphasized Accelerate `cubic-bezier(0.3,0,0.8,0.15)`(퇴장) 분리 토큰 사용 | 화면 진입·주요 전환 |
+| Standard Decelerate | `cubic-bezier(0,0,0,1)` | 요소 진입 (빠르게 시작 → 천천히 정지) |
+| Standard Accelerate | `cubic-bezier(0.3,0,1,1)` | 요소 퇴장 (천천히 시작 → 빠르게 퇴장) |
 
 ```css
 /* Standard — 일반 전환 */
 transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 
 /* Decelerate — 요소 등장 */
-transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+transition-timing-function: cubic-bezier(0, 0, 0, 1);
 
 /* Accelerate — 요소 퇴장 */
-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+transition-timing-function: cubic-bezier(0.3, 0, 1, 1);
 ```
 
 ---
@@ -484,9 +486,7 @@ transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 
 ## Touch Target
 
-```css
-48px × 48px
-```
+최소 48 × 48dp (Material 규격 단위는 dp; 웹 CSS 구현 시 48px에 대응).
 
 ---
 
@@ -534,7 +534,7 @@ WCAG AA 이상
 
 ## Layout
 
-* [ ] 4dp Grid 사용
+* [ ] 8dp Grid 사용 (4dp는 아이콘·타이포용 보조 그리드)
 * [ ] 반응형 대응
 * [ ] Breakpoint 적용
 
@@ -574,3 +574,36 @@ WCAG AA 이상
 * [ ] Skeleton UI 제공
 * [ ] Lazy Loading 적용
 * [ ] 애니메이션 60fps 유지
+
+---
+
+## 비공식 (공식 문서 미수록 · 관행·추정값)
+
+아래 항목은 공식 Material Design 3 문서에서 확인되지 않은 비공식 컨벤션이다.
+
+### §2 Layout — 간격 레이블 (XS/S/M/L/XL/XXL) — 비공식
+
+M3 공식 토큰명은 space50/space100 등 숫자형이며 XS/S/M/L/XL/XXL 레이블은 비공식이다. dp 값 자체(4/8/16/24/32/48)는 8dp 배수 기준으로 유효하다.
+
+| Size | Value |
+| ---- | ----- |
+| XS   | 4dp   |
+| S    | 8dp   |
+| M    | 16dp  |
+| L    | 24dp  |
+| XL   | 32dp  |
+| XXL  | 48dp  |
+
+---
+
+## 출처
+
+확인일 2026-06-29. (본문의 일부 px 표기는 공식 dp 규격을 CSS 단위로 옮긴 값이다.)
+
+- 최소 터치 영역 48dp: https://m3.material.io/foundations/designing/structure (본문 JS 렌더링 — 검색 색인으로 확인)
+- 스페이싱(8dp/4dp): https://m3.material.io/styles/spacing/overview
+- Motion easing 토큰: https://github.com/material-components/material-components-android/blob/master/docs/theming/Motion.md
+- M2 standard easing(참고): https://m1.material.io/motion/duration-easing.html
+- Window size class(breakpoint): https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes
+- Motion duration 토큰: https://github.com/material-foundation/material-tokens/blob/json/json/motion.json
+- FAB specs (2025): https://m3.material.io/components/floating-action-button/specs

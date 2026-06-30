@@ -28,25 +28,10 @@
 ### Grid System
 
 * 기본 여백 단위: 8px (Apple HIG 8pt 기준. CSS에서는 px로 구현한다. CSS의 `pt`는 1.333px 인쇄 단위이므로 사용하지 않는다.)
-* 컴포넌트 간격:
-
-  * Small: 8px
-  * Medium: 16px
-  * Large: 24px
-  * Extra Large: 32px
-
-### Container
-
-```css
-max-width: 1200px;
-padding: 24px;
-margin: 0 auto;
-```
 
 ### Safe Area
 
 * 화면 가장자리에 요소를 붙이지 않는다.
-* 최소 16px 이상의 여백을 유지한다.
 
 ---
 
@@ -83,8 +68,6 @@ sans-serif
 
 ### Rules
 
-* 줄 길이 60~80자 권장
-* 행간 1.4~1.6
 * 불필요한 Bold 남용 금지
 
 ---
@@ -136,43 +119,15 @@ sans-serif
 
 ## 5. Buttons
 
-### Primary Button
-
-```css
-height: 44px;
-padding: 0 16px;
-border-radius: 12px;
-```
-
-### Secondary Button
-
-```css
-background: transparent;
-border: none;
-```
-
 ### Rules
 
-* 최소 터치 영역 44x44
+* 최소 터치 영역 44×44pt (CSS 44px)
 * 버튼 개수 최소화
 * 주요 액션은 화면당 1개
 
 ---
 
 ## 6. Cards
-
-```css
-border-radius: 16px;
-padding: 16px;
-background: white;
-```
-
-### Shadow
-
-```css
-box-shadow:
-0 2px 8px rgba(0,0,0,0.08);
-```
 
 ### Rules
 
@@ -204,12 +159,6 @@ height: 44px;
 
 ## 8. Lists
 
-### Item Height
-
-```css
-44px ~ 56px
-```
-
 ### Rules
 
 * 시각적 구분선 최소화
@@ -219,14 +168,6 @@ height: 44px;
 ---
 
 ## 9. Forms
-
-### Input
-
-```css
-height: 44px;
-border-radius: 10px;
-padding: 0 12px;
-```
 
 ### Rules
 
@@ -238,21 +179,15 @@ padding: 0 12px;
 
 ## 10. Animations
 
-### Duration
-
-| Type   | Duration |
-| ------ | -------- |
-| Fast   | 150ms    |
-| Normal | 250ms    |
-| Slow   | 350ms    |
-
 ### Easing
 
 ```css
+/* 참고: 아래 값은 CSS 표준 ease-in-out과 동일하며 Apple 고유 공식값이 아니다 */
 cubic-bezier(0.42, 0, 0.58, 1)
 ```
 
-`cubic-bezier(0.4, 0, 0.2, 1)`은 Material Design(Google)의 standard easing이므로 Apple 가이드에서 사용하지 않는다.
+- Apple UIKit의 `.easeInEaseOut`은 위 CSS `ease-in-out`과 수치상 동일하지만, iOS 시스템 UI 애니메이션(시트·화면 전환 등)은 spring 기반(`UISpringTimingParameters`)이라 고정 cubic-bezier로 정확히 재현되지 않는다. 가능하면 spring 애니메이션을 우선한다.
+- `cubic-bezier(0.4, 0, 0.2, 1)`은 Material Design **2**의 standard easing이다. (Material **3**의 standard는 `cubic-bezier(0.2, 0, 0, 1)`) — Apple 가이드에서는 사용하지 않는다.
 
 ### Rules
 
@@ -265,7 +200,6 @@ cubic-bezier(0.42, 0, 0.58, 1)
 ## 11. Icons
 
 * SF Symbols 사용 권장
-* 20~24px 기준
 * 텍스트 없이 의미 전달 가능해야 함
 
 ---
@@ -279,7 +213,7 @@ cubic-bezier(0.42, 0, 0.58, 1)
 ### Touch Target
 
 ```css
-44px × 44px 이상
+44×44pt 이상 (CSS에서는 44px)
 ```
 
 ### Support
@@ -294,7 +228,7 @@ cubic-bezier(0.42, 0, 0.58, 1)
 
 ### Rules
 
-* Pure Black 사용 지양
+* 색상은 `UIColor.systemBackground` 등 semantic color 사용 (Light/Dark 자동 적응; 다크모드 systemBackground는 실제로 #000000)
 * 계층에 따라 명도 차이 제공
 
 예시
@@ -316,15 +250,7 @@ height: 49px;
 padding-bottom: env(safe-area-inset-bottom); /* 홈 인디케이터 영역 확보 */
 ```
 
-### Item
-
-```css
-min-width: 44px;
-padding: 4px 0;
-```
-
 * 아이콘: 25×25px
-* 레이블: 10px (Caption보다 작게)
 * 항목 수: 최대 5개 (iPhone 기준)
 
 ### Rules
@@ -342,32 +268,13 @@ padding: 4px 0;
 
 | Detent  | 높이         | 용도                  |
 | ------- | ------------ | --------------------- |
-| Small   | ~25% vh      | 간단한 옵션, 확인     |
-| Medium  | ~50% vh      | 보조 정보, 필터       |
-| Large   | ~92% vh      | 전체 콘텐츠 (사실상 전체화면) |
-
-### Container
-
-```css
-border-radius: 12px 12px 0 0;
-padding-top: 8px;
-padding-bottom: env(safe-area-inset-bottom);
-```
-
-### Handle (드래그 핸들)
-
-```css
-width: 36px;
-height: 5px;
-border-radius: 3px;
-background: #3A3A3C;
-margin: 0 auto 8px;
-```
+| Small   | ~25% vh      | 간단한 옵션, 확인 (Apple 공식 detent 아님 — iOS 16+ `.custom(...)`으로 구현) |
+| Medium  | ~50% vh      | 보조 정보, 필터 (`.medium()`, iOS 15+) |
+| Large   | ~92% vh      | 전체 콘텐츠 (`.large()`, iOS 15+, 사실상 전체화면) |
 
 ### Rules
 
 * 핸들을 항상 상단에 표시 (드래그 가능함을 암시)
-* 배경 dimming: `rgba(0, 0, 0, 0.4)`
 * 아래로 스와이프하면 dismiss
 * 시트 내부 스크롤이 최상단일 때만 dismiss 제스처 활성화
 
@@ -456,3 +363,143 @@ padding-right: env(safe-area-inset-right);
 * [ ] 불필요한 렌더링 제거
 * [ ] 이미지 최적화
 * [ ] Lazy Loading 적용
+
+---
+
+## 비공식 (공식 문서 미수록 · 관행·추정값)
+
+아래 항목은 공식 Apple HIG·developer.apple.com 문서에서 확인되지 않은 일반 관행값·추정값이다. 공식 출처가 확인되면 위 본문으로 옮긴다.
+
+### Layout — 비공식
+
+#### Container
+
+```css
+max-width: 1200px;
+padding: 24px;
+margin: 0 auto;
+```
+
+#### Grid System 컴포넌트 간격
+
+* Small: 8px
+* Medium: 16px
+* Large: 24px
+* Extra Large: 32px
+
+#### Safe Area 최소 여백
+
+* 최소 16px 이상의 여백을 유지한다.
+
+### Typography — 비공식
+
+* 줄 길이 60~80자 권장
+* 행간 1.4~1.6
+
+### Buttons — 비공식
+
+#### Primary Button
+
+```css
+height: 44px;
+padding: 0 16px;
+border-radius: 12px;
+```
+
+#### Secondary Button
+
+```css
+background: transparent;
+border: none;
+```
+
+### Cards — 비공식
+
+```css
+border-radius: 16px;
+padding: 16px;
+background: white;
+```
+
+#### Shadow
+
+```css
+box-shadow:
+0 2px 8px rgba(0,0,0,0.08);
+```
+
+### Lists — 비공식
+
+#### Item Height
+
+```css
+44px ~ 56px
+```
+
+### Forms — 비공식
+
+#### Input
+
+```css
+height: 44px;
+border-radius: 10px;
+padding: 0 12px;
+```
+
+### Animations — 비공식
+
+#### Duration
+
+| Type   | Duration |
+| ------ | -------- |
+| Fast   | 150ms    |
+| Normal | 250ms    |
+| Slow   | 350ms    |
+
+### Icons — 비공식
+
+* 20~24px 기준
+
+### Tab Bar — 비공식
+
+#### Item
+
+```css
+min-width: 44px;
+padding: 4px 0;
+```
+
+* 레이블: 10px (Caption보다 작게)
+
+### Bottom Sheet — 비공식
+
+#### Container
+
+```css
+border-radius: 12px 12px 0 0;
+padding-top: 8px;
+padding-bottom: env(safe-area-inset-bottom);
+```
+
+#### Handle (드래그 핸들)
+
+```css
+width: 36px;
+height: 5px;
+border-radius: 3px;
+background: #3A3A3C;
+margin: 0 auto 8px;
+```
+
+* 배경 dimming: `rgba(0, 0, 0, 0.4)`
+
+---
+
+## 출처
+
+확인일 2026-06-29. (아래 출처에 없는 세부 수치 — 폰트·아이콘·레이블 px 등 — 은 추정·관행값이다.)
+
+- 최소 터치 영역: https://developer.apple.com/design/tips/
+- Sheet detent: https://developer.apple.com/videos/play/wwdc2021/10063/ · https://developer.apple.com/videos/play/wwdc2022/10068/
+- 애니메이션(spring 기반): https://developer.apple.com/videos/play/wwdc2023/10158/
+- Dark Mode `systemBackground`: https://developer.apple.com/documentation/uikit/uicolor/systembackground

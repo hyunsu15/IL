@@ -4,6 +4,12 @@
 
 ## 1. Design Principles
 
+M3 공식 핵심 원칙은 **Personal · Adaptive · Expressive** 세 가지다. (접근성은 별도의 기반 요구사항으로 §13에서 다룬다.) 출처: https://m3.material.io/foundations/overview/principles
+
+### Personal
+
+* 사용자의 취향(테마·색상)에 맞춰 개인화된다 — Dynamic Color 등.
+
 ### Adaptive
 
 * 다양한 기기 환경에 대응한다.
@@ -13,11 +19,6 @@
 
 * 브랜드와 사용자의 개성을 표현할 수 있다.
 * 색상과 형태를 적극 활용한다.
-
-### Accessible
-
-* 누구나 쉽게 사용할 수 있어야 한다.
-* 접근성을 기본 요구사항으로 간주한다.
 
 ---
 
@@ -77,6 +78,8 @@ sans-serif
 | Label Large    | 14px |
 
 ---
+
+> M3는 위 15종 baseline 타입 스케일 외에, 더 굵은 웨이트의 **Emphasized** 15종 스타일을 추가 제공한다(강조 영역에 선택적 사용). 출처: https://m3.material.io/styles/typography/type-scale-tokens
 
 ## Rules
 
@@ -151,9 +154,31 @@ sans-serif
 
 ---
 
-## Tonal Elevation (Surface Tint)
+## Tonal Surface Color (현행 모델)
 
-M3는 그림자 대신 **surfaceTint 색상 오버레이**로 고도를 표현한다. 라이트 모드에서 elevation이 높아질수록 Primary 색상이 surface에 얇게 혼합된다.
+> ⚠️ **중요 업데이트:** M3는 **surfaceTint 오버레이 방식을 폐기(deprecated)** 했다. 현재는 elevation과 분리된 **surface container 색상 역할**로 표면 위계를 표현한다. 출처: https://m3.material.io/blog/tone-based-surface-color-m3
+
+표면의 계층은 다음 5단계 tonal surface container 역할로 나타낸다(불투명도 오버레이 아님).
+
+| Surface Role             | 용도(대략)                    |
+| ------------------------ | ----------------------------- |
+| `surfaceContainerLowest` | 가장 낮은 표면                |
+| `surfaceContainerLow`    | 구 elevation +1 (Elevated Card 등) |
+| `surfaceContainer`       | 구 elevation +2 (기본 컨테이너) |
+| `surfaceContainerHigh`   | 구 elevation +3 (Dialog 등)   |
+| `surfaceContainerHighest`| 최상위 표면 (구 +4/+5, `surfaceDim`도 함께 사용) |
+
+```css
+/* Elevated Card — surface container 역할 사용 (오버레이 계산 불필요) */
+.card-elevated { background-color: var(--md-sys-color-surface-container-low); }
+
+/* Dialog */
+.dialog { background-color: var(--md-sys-color-surface-container-high); }
+```
+
+### (Deprecated) 구 surfaceTint 오버레이 모델 — 참고용
+
+아래는 **2024년 이전** M3에서 쓰던 방식으로, 현재는 폐기되었다. 레거시 코드 이해용으로만 남긴다.
 
 | Level | surfaceTint Opacity | 적용 컴포넌트 예시          |
 | ----- | ------------------- | --------------------------- |
@@ -163,28 +188,6 @@ M3는 그림자 대신 **surfaceTint 색상 오버레이**로 고도를 표현�
 | 3     | 11%                 | FAB, Dialog                 |
 | 4     | 12%                 | (호버 상태 elevation)        |
 | 5     | 14%                 | 최상위 오버레이              |
-
-```css
-/* Level 1 — Elevated Card */
-.card-elevated {
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 5%,
-    var(--md-sys-color-surface)
-  );
-}
-
-/* Level 3 — FAB / Dialog */
-.fab, .dialog {
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 11%,
-    var(--md-sys-color-surface)
-  );
-}
-```
-
-> **주의:** 다크 모드에서는 surfaceTint 대신 그림자(shadow)를 활용해 고도를 구분한다.
 
 ---
 
@@ -239,10 +242,10 @@ M3는 인터랙션 상태를 색상 오버레이(State Layer)로 표현한다. �
 
 ```css
 height: 40px;
-border-radius: 20px;
+border-radius: 9999px; /* 'full' 토큰 = height ÷ 2 (기본 40dp에서 20dp). 고정 20px 아님 — pill 형태 */
 ```
 
-주요 액션
+주요 액션 (M3는 버튼을 fully-rounded 'full' 코너로 정의한다. 출처: https://m3.material.io/components/buttons/overview)
 
 ---
 
@@ -412,7 +415,8 @@ border-radius: 4px;
 | Long       | 450~600ms  |
 | Extra-Long | 700~1000ms |
 
-> M3 공식 duration 토큰 기준. 출처: https://github.com/material-foundation/material-tokens/blob/json/json/motion.json
+> M3 공식 duration 토큰 기준. 출처: https://m3.material.io/styles/motion/easing-and-duration/tokens-specs
+> (구 출처 `material-foundation/material-tokens` 리포지토리는 2024-10 아카이브되어 해당 경로가 404다.)
 
 ---
 
@@ -459,6 +463,8 @@ transition-timing-function: cubic-bezier(0.3, 0, 1, 1);
 | Medium      | 12px  |
 | Large       | 16px  |
 | Extra Large | 28px  |
+
+> 위 5단계는 유효하지만 완전한 목록은 아니다. M3는 0dp(직각)부터 Full(완전 원형)까지 세분화된 **10단계 corner radius 스케일**을 제공한다. 출처: https://m3.material.io/styles/shape/corner-radius-scale
 
 ---
 
@@ -559,7 +565,7 @@ WCAG AA 이상
 
 ## Elevation
 
-* [ ] Tonal surfaceTint 적용 (그림자만으로 고도 표현하지 않음)
+* [ ] Tonal surface-container 역할 사용 (surfaceTint 오버레이는 deprecated — 그림자만으로 고도 표현하지 않음)
 * [ ] 다크모드에서 shadow 활용
 
 ## Accessibility
@@ -598,12 +604,19 @@ M3 공식 토큰명은 space50/space100 등 숫자형이며 XS/S/M/L/XL/XXL 레�
 
 ## 출처
 
-확인일 2026-06-29. (본문의 일부 px 표기는 공식 dp 규격을 CSS 단위로 옮긴 값이다.)
+확인일 2026-06-29(1차), 2026-07-03(2차 재검증). (본문의 일부 px 표기는 공식 dp 규격을 CSS 단위로 옮긴 값이다.)
 
-- 최소 터치 영역 48dp: https://m3.material.io/foundations/designing/structure (본문 JS 렌더링 — 검색 색인으로 확인)
+- 핵심 원칙(Personal/Adaptive/Expressive): https://m3.material.io/foundations/overview/principles
+- 최소 터치 영역 48dp (iOS 44 예외 명시): https://m3.material.io/foundations/designing/structure
 - 스페이싱(8dp/4dp): https://m3.material.io/styles/spacing/overview
-- Motion easing 토큰: https://github.com/material-components/material-components-android/blob/master/docs/theming/Motion.md
-- M2 standard easing(참고): https://m1.material.io/motion/duration-easing.html
+- Type scale + Emphasized: https://m3.material.io/styles/typography/type-scale-tokens
+- Shape 10단계 스케일: https://m3.material.io/styles/shape/corner-radius-scale
+- State Layers(Hover 8/Focus·Pressed 10/Dragged 16%): https://m3.material.io/foundations/interaction/states/state-layers
+- Tone-based surface color (surfaceTint 폐기): https://m3.material.io/blog/tone-based-surface-color-m3
+- Buttons(full 코너/40dp): https://m3.material.io/components/buttons/overview
+- Motion easing/duration 토큰: https://m3.material.io/styles/motion/easing-and-duration/tokens-specs
 - Window size class(breakpoint): https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes
-- Motion duration 토큰: https://github.com/material-foundation/material-tokens/blob/json/json/motion.json
 - FAB specs (2025): https://m3.material.io/components/floating-action-button/specs
+- M3 Expressive(2025 업데이트 웨이브): https://m3.material.io/blog/building-with-m3-expressive
+
+> **검증 방식 주의:** `m3.material.io/*` 페이지는 JS 렌더링(SPA)이라 정적 fetch로 본문을 읽지 못한다. Window size class(Android 문서)·State Layers·48dp·FAB·원칙·surfaceTint 폐기 등은 공식 도메인 검색 색인/정적 페이지로 교차 확인했다. 다만 아래 값들은 이번 재검증에서 **라이브 공식 페이지 본문으로 직접 확인하지 못한 항목**이다(위젯 실측·미러링 값으로 널리 통용되나 엄밀 미확인): 네비게이션 높이(Top App Bar 64 / Nav Rail 80 / Drawer 360 / Bottom Nav 80), Text Field 56/4, baseline 컬러 hex, 다크모드 surface hex, Standard Decelerate/Accelerate·Emphasized 이징 세부 곡선. JS 렌더 가능한 브라우저로 후속 확인 권장.

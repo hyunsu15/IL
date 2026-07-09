@@ -188,6 +188,7 @@ Loading...
 * 스와이프 삭제는 반드시 확인 단계 또는 Undo를 함께 제공한다 (6. Forgiveness 참고).
 * Pull-to-Refresh는 스크롤이 최상단(scrollTop === 0)일 때만 작동한다.
 * 제스처만으로 접근 가능한 기능은 반드시 버튼 대안도 제공한다 (Accessibility).
+* **Long Press를 유일한 진입점으로 쓰지 않는다.** Apple HIG는 숨겨진 메뉴를 여는 롱프레스의 대안(메뉴 항목을 다른 곳에 함께 배치)을 권장한다 — 발견 가능성(discoverability)이 낮기 때문이다. 출처: Context Menus HIG — https://developer.apple.com/design/human-interface-guidelines/context-menus
 
 ---
 
@@ -197,6 +198,9 @@ Loading...
 
 Sheet는 현재 컨텍스트를 유지한 채 보조 작업을 수행할 때 사용한다.
 Modal은 컨텍스트를 완전히 차단해야 할 때만 사용한다.
+
+> Apple HIG(Sheets): "A sheet helps people perform a scoped task that's closely related to their current context." 출처: https://developer.apple.com/design/human-interface-guidelines/sheets
+> (아래 "언제 무엇을 쓸까" 표는 HIG 원칙을 바탕으로 이 가이드가 정리한 실무 매핑이며, Apple의 공식 결정표는 아니다.)
 
 ---
 
@@ -628,3 +632,16 @@ Progress 표시 필요
 ## Rule
 
 Long Press 메뉴는 최대 5개 항목 이내로 구성한다.
+
+---
+
+# 출처
+
+확인일 2026-07-03. 공식 항목은 Apple HIG/developer.apple.com 기준이며, "비공식"으로 표시된 원칙은 일반 UX·HCI(Nielsen 휴리스틱 등)로 Apple 공식 출처가 없다.
+
+- Sheet 정의/사용: https://developer.apple.com/design/human-interface-guidelines/sheets
+- Context Menus / Long Press 대안 권장: https://developer.apple.com/design/human-interface-guidelines/context-menus
+- 접근성(VoiceOver·Dynamic Type·44pt): https://developer.apple.com/design/human-interface-guidelines/accessibility · https://developer.apple.com/design/tips/
+- 제스처(Pull-to-Refresh·스와이프 액션 등, SwiftUI Lists): https://developer.apple.com/documentation/swiftui/lists
+
+> 검증 방식 주의: HIG(`.../human-interface-guidelines/*`) 페이지는 JS 렌더링(SPA)이라 정적 fetch로 본문 확인이 제한된다. 위 항목은 공식 도메인 검색 색인·API 레퍼런스로 교차 확인했다.

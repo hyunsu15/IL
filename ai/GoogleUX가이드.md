@@ -50,10 +50,10 @@ M3는 사용자의 모든 인터랙션에 **상태 레이어(State Layer)** 를 
 
 ## 원칙
 
-* Hover, Focus, Pressed, Dragged 상태를 명확히 구분한다.
+* Hover, Focus, Pressed, Dragged 상태를 명확히 구분한다. 공식 불투명도: Hover 8% / Focus 10% / Pressed 10% / Dragged 16%. 출처: https://m3.material.io/foundations/interaction/states/state-layers
 * 색상 교체 없이 **불투명도 오버레이**로 상태를 표현한다 (브랜드 색상 유지).
 * 키보드 포커스 상태는 시각적으로 명확하게 표시해야 한다 (접근성 필수).
-* 한 레이아웃에 hover 인스턴스는 최대 1개, pressed 인스턴스는 최대 1개로 제한한다 (단, Hover와 Focus 등 서로 다른 상태 유형은 중첩될 수 있다).
+* (권장 관행 — M3 명문 규정 미확인) 한 레이아웃에 hover 인스턴스는 최대 1개, pressed 인스턴스는 최대 1개로 제한한다 (단, Hover와 Focus 등 서로 다른 상태 유형은 중첩될 수 있다).
 
 ## 상태별 UX 의미
 
@@ -88,7 +88,7 @@ M3는 사용자의 모든 인터랙션에 **상태 레이어(State Layer)** 를 
 ## 규칙
 
 * 한 화면에 Filled Button(또는 FAB) 1개 원칙 — 주의를 분산시키지 않는다.
-* FAB는 생성·시작 같은 긍정적 액션에만 사용한다. 삭제·경고에는 사용하지 않는다.
+* FAB는 화면에서 가장 중요한 단일 액션(생성·시작 등)에 사용한다. 삭제·경고 등 파괴적 액션에는 지양한다. *(관행 — M3 명문 규정 미확인)*
 * 카드 안에 Filled Button이 여러 개 있으면 우선순위를 재검토한다.
 
 ## 좋은 예시
@@ -269,3 +269,15 @@ M3는 사용자의 모든 인터랙션에 **상태 레이어(State Layer)** 를 
 ## 결론
 
 Google UX의 핵심은 단순히 예쁜 화면을 만드는 것이 아니라, 사용자가 쉽고 빠르게 목표를 달성할 수 있도록 돕는 것이다. 따라서 명확성, 일관성, 접근성, 효율성, 피드백 제공을 중심으로 설계하는 것이 중요하다.
+
+---
+
+# 출처
+
+확인일 2026-07-03. "비공식"으로 표시된 원칙(1~9번의 명확성·일관성·효율성 등)은 일반 UX·HCI(주로 Nielsen 휴리스틱)로 Material 공식 문서에 독립 원칙으로 명명되지 않았다.
+
+- State Layers(Hover 8/Focus·Pressed 10/Dragged 16%): https://m3.material.io/foundations/interaction/states/state-layers
+- 접근성 기반 요구사항: https://m3.material.io/foundations/accessibility
+- 컴포넌트 선택(버튼/FAB): https://m3.material.io/components/floating-action-button/specs · https://m3.material.io/components/buttons/overview
+
+> 검증 방식 주의: `m3.material.io/*`는 JS 렌더링(SPA)이라 정적 fetch로 본문 확인이 제한된다. State Layer 불투명도는 공식 도메인 검색 색인으로 교차 확인했다. §11 hover/focus 중첩 규칙, §12 FAB "긍정적 액션 한정" 등은 공식 명문 규정을 찾지 못해 "관행"으로 표기했다.

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
-import com.example.repofacade.core.RepoFacadeRegistrar;
+import com.example.repofacade.core.data.RepoFacadeRegistrar;
 
 @Configuration(proxyBeanMethods = false)
 @ComponentScan(basePackages = "com.example.repofacade")

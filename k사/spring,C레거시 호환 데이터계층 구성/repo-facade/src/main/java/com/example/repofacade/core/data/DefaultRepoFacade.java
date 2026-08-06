@@ -1,4 +1,4 @@
-package com.example.repofacade.core;
+package com.example.repofacade.core.data;
 
 import java.util.List;
 import java.util.function.Function;
@@ -20,31 +20,31 @@ public class DefaultRepoFacade<M> implements RepoFacade<M> {
     }
 
     @Override
-    public <R> Result<R> one(Function<M, R> query) {
+    public <R> DataResultWrapper<R> one(Function<M, R> query) {
         return call(() -> {
             R row = query.apply(mapper);
             return row == null
-                    ? Result.fail(ResultStatus.SQL_NO_DATA, "조회 결과 없음")
-                    : Result.ok(row);
+                    ? DataResultWrapper.fail(DataResultStatus.SQL_NO_DATA, "조회 결과 없음")
+                    : DataResultWrapper.ok(row);
         });
     }
 
     @Override
-    public <R> Result<List<R>> many(Function<M, List<R>> query) {
+    public <R> DataResultWrapper<List<R>> many(Function<M, List<R>> query) {
         return call(() -> {
             List<R> rows = query.apply(mapper);
-            return Result.ok(rows == null ? List.<R>of() : rows);
+            return DataResultWrapper.ok(rows == null ? List.<R>of() : rows);
         });
     }
 
     /* 인터페이스의 exec가 활성화되면 같이 해제한다.
     @Override
-    public Result<Integer> exec(ToIntFunction<M> command) {
-        return call(() -> Result.ok(command.applyAsInt(mapper)));
+    public DataResultWrapper<Integer> exec(ToIntFunction<M> command) {
+        return call(() -> DataResultWrapper.ok(command.applyAsInt(mapper)));
     }
     */
 
-    private <T> Result<T> call(Supplier<Result<T>> body) {
+    private <T> DataResultWrapper<T> call(Supplier<DataResultWrapper<T>> body) {
         try {
             return body.get();
         } catch (RuntimeException e) {

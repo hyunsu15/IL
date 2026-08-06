@@ -4,7 +4,7 @@ public class DefaultRepoFacade<M> implements RepoFacade<M> {
     private final AuditLogger audit;          // "로직 조금"의 의존성도 그냥 주입
 
     @Override
-    public <R, D> Result<D> one(Function<M, R> query) {
+    public <R, D> DataResultWrapper<D> one(Function<M, R> query) {
 
     }
 }

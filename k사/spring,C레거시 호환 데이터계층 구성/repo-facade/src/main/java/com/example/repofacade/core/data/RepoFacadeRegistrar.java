@@ -1,4 +1,4 @@
-package com.example.repofacade.core;
+package com.example.repofacade.core.data;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;

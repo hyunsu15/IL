@@ -1,6 +1,6 @@
 # repo-facade — 매퍼 파사드 자동 등록 (실행 가능 데모)
 
-MyBatis 매퍼마다 `RepoFacade<M>` 빈을 자동 등록해서, 예외 대신 `Result<T>`(rc + 값)로
+MyBatis 매퍼마다 `RepoFacade<M>` 빈을 자동 등록해서, 예외 대신 `DataResultWrapper<T>`(rc + 값)로
 반환하는 C 호환 데이터 계층 구성. 상위 폴더의 스케치(.java 낱장 파일)를 실제 동작하는
 코드로 완성한 것이다.
 
@@ -19,14 +19,14 @@ powershell -ExecutionPolicy Bypass -File run.ps1
 ## 구조
 
 ```
-core/  (프레임워크 — 그대로 재사용 가능)
-  Result.java              rc + 값. 실패 결과의 value() 접근은 그 자리에서 터진다
-  ResultStatus.java        rc 코드표 — C 레거시 코드명 (SUCCESS=0, SQL_NO_DATA=10,
+core/data/  (프레임워크 — 그대로 재사용 가능)
+  DataResultWrapper.java   rc + 값. 실패 결과의 value() 접근은 그 자리에서 터진다
+  DataResultStatus.java    rc 코드표 — C 레거시 코드명 (SUCCESS=0, SQL_NO_DATA=10,
                            SQLOVF=11, SQLDUP=20, SQLNULL=21, SQLDISCON=30, SYSTEM_ERROR=99)
-  RepoFacade.java          one / many — 매퍼 호출을 Result로 감싸는 인터페이스
+  RepoFacade.java          one / many — 매퍼 호출을 DataResultWrapper로 감싸는 인터페이스
                            (쓰기용 exec는 아직 불필요해 주석 처리 — 필요 시 해제)
   DefaultRepoFacade.java   공용 제네릭 구현체 (SimpleJpaRepository와 같은 자리)
-  ExceptionClassifier.java 데이터 접근 예외 → ResultStatus 분류 (버그성 예외는 다시 던짐)
+  ExceptionClassifier.java 데이터 접근 예외 → DataResultStatus 분류 (버그성 예외는 다시 던짐)
   RepoFacadeRegistrar.java 매퍼 정의를 스캔해 파사드 빈 정의를 양산하는 등록기
 
 demo/  (사용 예시)
@@ -46,20 +46,21 @@ demo/  (사용 예시)
 ```java
 private final RepoFacade<OrderMapper> orders;
 
-Result<OrderRow> r = orders.one(m -> m.selectById(id));
-if (r.fail()) {             // C 스타일 분기 — r.rc() != 0 과 동일
-    return Result.fail(r.status(), r.detail());
+DataResultWrapper<OrderRow> r = orders.one(m -> m.selectById(id));
+if (r.fail()) {             // C 스타일 분기 — r.status().code() != 0 과 동일
+    return DataResultWrapper.fail(r.status(), r.detail());
 }
 OrderRow row = r.value();
 ```
 
 ## 설계 결정 요약
 
-- **rc는 enum이 원본, int는 파생.** `ResultStatus`가 원본이고 `rc()`가 숫자를 파생시킨다.
-  C 개발자는 rc로 분기하고, 자바 쪽은 enum으로 switch할 수 있다.
+- **rc는 enum이 원본, int는 파생.** `DataResultStatus`가 원본이고 `code()`가 숫자를 파생시킨다.
+  분기는 `ok()` / `fail()`로 하고, 숫자 rc가 필요하면 `status().code()`로 꺼낸다
+  (래퍼의 `rc()` 단축 메서드는 제거 — 분기 수단이 둘로 갈리는 것을 막기 위함).
 - **실패 결과의 `value()`는 즉시 터진다.** rc 확인을 빠뜨린 코드가 엉뚱한 곳의 NPE로
   나타나는 것을 막는다 ("예외보단 객체로 내야하는 이유.md"의 원칙).
-- **데이터가 원인인 실패만 Result로 바꾼다.** SQL_NO_DATA / SQLOVF / SQLDUP /
+- **데이터가 원인인 실패만 DataResultWrapper로 바꾼다.** SQL_NO_DATA / SQLOVF / SQLDUP /
   SQLNULL / SQLDISCON. 코드가 원인인 실패(NPE, 매핑 누락,
   잘못된 SQL 등 비-데이터접근 예외)는 그대로 던진다 — 복구가 아니라 수정 대상이므로.
   전부 삼키면 버그가 조용한 장애로 바뀐다.
@@ -77,11 +78,11 @@ OrderRow row = r.value();
 
 (exec는 현재 주석 처리 상태다. 쓰기가 필요해져 해제할 때 아래를 반드시 읽을 것.)
 
-실패를 Result로 받으면 예외가 트랜잭션 경계를 넘지 않으므로 `@Transactional`의
+실패를 DataResultWrapper로 받으면 예외가 트랜잭션 경계를 넘지 않으므로 `@Transactional`의
 **자동 롤백이 일어나지 않는다.** 이 데모는 단건 쓰기(autocommit)라 문제없지만,
 여러 쓰기를 한 트랜잭션으로 묶는 코드라면 규칙이 필요하다:
 
-- 되돌릴 이전 쓰기가 있는 실패 → Result가 아니라 **예외로 던진다** (롤백 필요), 또는
+- 되돌릴 이전 쓰기가 있는 실패 → DataResultWrapper가 아니라 **예외로 던진다** (롤백 필요), 또는
 - rc를 보고 `TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()` 호출.
 
 "예외보단 객체로 내야하는 이유.md" Q3의 규칙과 같은 내용이다.

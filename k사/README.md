@@ -21,7 +21,7 @@
 C 개발자 위주 조직에서 계층마다 try-catch로 분기하는 코드가 굳어져 있어, **"C처럼 읽히되 Java답게 관리되는"** 구조를 설계했습니다.
 
 - 실패를 [예외가 아닌 결과 객체](<spring,C레거시 호환 데이터계층 구성/예외보단객체로 내야하는 이유.md>)(`DataResultWrapper<T>`)로 반환 → 중간 계층 try-catch 제거
-- 매퍼별 **파사드 빈 자동 등록** → 래핑·변환 일원화 ([예제 코드](https://github.com/hyunsu15/spring-c-layer))
+- 헬퍼 Component 추가 → 래핑·변환 일원화 ([예제 코드](https://github.com/hyunsu15/spring-c-layer))
 - Spring 추상화를 벗어난 MyBatis `TooManyResultsException` [표준 예외로 번역](<spring,C레거시 호환 데이터계층 구성/마이 바티스 예외표준화.md>)
 
 ### 제안으로 한 것들
